@@ -12,7 +12,11 @@ std::string offsetStr(int count) {
 
 void dumpInline(std::shared_ptr<mkd::Inline> inl, int offset = 0) {
     std::string ofs = offsetStr(offset);
-    if (inl->type == mkd::INLINE_TYPE_LINK) {
+    if (inl->type == mkd::INLINE_TYPE_CODE_SPAN) {
+        std::shared_ptr<mkd::inlines::CodeSpan> code = std::dynamic_pointer_cast<mkd::inlines::CodeSpan>(inl);
+        flog::debug("{}CODE_SPAN: '{}',", ofs, code->code);
+    }
+    else if (inl->type == mkd::INLINE_TYPE_LINK) {
         std::shared_ptr<mkd::inlines::Link> link = std::dynamic_pointer_cast<mkd::inlines::Link>(inl);
         flog::debug("{}LINK[DEST='{}', TITLE='{}'] \\{", ofs, link->destination, link->title);
         for (const auto& text : link->inlines) {

@@ -27,6 +27,9 @@ namespace mkd {
         // Attempt to parse a blank line
         block = blocks::BlankLine::parse(src);
         if (block) { return block; }
+
+        // Should never get here except for an empty document
+        return NULL;
     }
     
     Block::~Block() {}

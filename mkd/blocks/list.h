@@ -1,9 +1,10 @@
 #pragma once
-#include "../block.h"
-#include "../source.h"
 #include "list_item.h"
 
 namespace mkd::blocks {
+    // Break the circular include dependency
+    class ListItem;
+
     class List : public Block {
     public:
         List(bool ordered, const std::vector<std::shared_ptr<ListItem>>& items);

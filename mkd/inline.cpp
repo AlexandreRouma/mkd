@@ -8,8 +8,12 @@ namespace mkd {
     Inline::~Inline() {}
 
     std::shared_ptr<Inline> Inline::parse(Source& src, bool allowSoftBreak) {
+        // Attempt to parse a code span
+        std::shared_ptr<Inline> inl = inlines::CodeSpan::parse(src);
+        if (inl) { return inl; }
+        
         // Attempt to parse a link
-        std::shared_ptr<Inline> inl = inlines::Link::parse(src);
+        inl = inlines::Link::parse(src);
         if (inl) { return inl; }
 
         // Attempt to parse an image

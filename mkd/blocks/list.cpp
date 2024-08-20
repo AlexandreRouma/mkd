@@ -7,7 +7,7 @@ namespace mkd::blocks {
         items(items)
     {}
 
-    static std::shared_ptr<List> parse(Source& src) {
+    std::shared_ptr<List> List::parse(Source& src) {
         // Parse as many items of the same type
         std::vector<std::shared_ptr<ListItem>> items;
         char lastMarker = 0;

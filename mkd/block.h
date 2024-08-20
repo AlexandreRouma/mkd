@@ -28,7 +28,6 @@ namespace mkd {
     };
 }
 
-#include "blocks/list_item.h"
 #include "blocks/list.h"
 #include "blocks/thematic_break.h"
 #include "blocks/heading.h"

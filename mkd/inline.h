@@ -4,6 +4,7 @@
 
 namespace mkd {
     enum InlineType {
+        INLINE_TYPE_CODE_SPAN,
         INLINE_TYPE_LINK,
         INLINE_TYPE_IMAGE,
         INLINE_TYPE_SOFT_BREAK,
@@ -21,6 +22,7 @@ namespace mkd {
     };
 }
 
+#include "inlines/code_span.h"
 #include "inlines/link.h"
 #include "inlines/image.h"
 #include "inlines/autolink.h"

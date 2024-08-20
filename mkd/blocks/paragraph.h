@@ -1,7 +1,7 @@
 #pragma once
 #include "../block.h"
 #include "../source.h"
-#include "../inlines/text.h"
+#include "../inline.h"
 
 namespace mkd::blocks {
     class Paragraph : public Block {

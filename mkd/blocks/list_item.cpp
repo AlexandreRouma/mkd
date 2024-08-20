@@ -7,7 +7,7 @@ namespace mkd::blocks {
         inlines(inlines)
     {}
 
-    static std::shared_ptr<ListItem> parse(Source& src) {
+    std::shared_ptr<ListItem> ListItem::parse(Source& src) {
         // Begin parsing session
         src.begin();
         
