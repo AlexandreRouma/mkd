@@ -16,5 +16,6 @@ namespace mkd::blocks {
     private:
         static std::shared_ptr<Heading> parseATX(Source& src);
         static std::shared_ptr<Heading> parseSetext(Source& src);
+        static int parseSetextUnderline(Source& src);
     };
 }

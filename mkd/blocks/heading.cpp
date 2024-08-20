@@ -1,4 +1,5 @@
 #include "heading.h"
+#include "paragraph.h"
 
 namespace mkd::blocks {
     Heading::Heading(const std::vector<std::shared_ptr<Inline>>& inlines, int level) :
@@ -62,6 +63,73 @@ namespace mkd::blocks {
     }
 
     std::shared_ptr<Heading> Heading::parseSetext(Source& src) {
-        return NULL; // TODO
+        // Begin parsing session
+        src.begin();
+
+        // Expect at most three spaces
+        for (int i = 0; i < 2; i++) {
+            if (!src.expect(' ')) { break; }
+        }
+
+        // Expect inlines until encountering a setex underline
+        std::vector<std::shared_ptr<Inline>> inlines;
+        std::shared_ptr<Inline> inl = NULL;
+        int level = 0;
+        while (true) {
+            // Stop if a setex underline is found
+            level = parseSetextUnderline(src);
+            if (level) { break; }
+
+            // Parse an inline
+            inl = Inline::parse(src, !inlines.empty() && inlines.back()->type != INLINE_TYPE_SOFT_BREAK);
+            if (!inl) { break; }
+            inlines.push_back(inl);
+        }
+
+        // If no inlines or no underline were found, give up
+        if (inlines.empty() || !level) {
+            src.abort();
+            return NULL;
+        }
+
+        // Remove the soft-break
+        inlines.pop_back();
+
+        // Commit the parsing session and create the heading object 
+        src.commit();
+        return std::make_shared<Heading>(inlines, level);
+    }
+
+    int Heading::parseSetextUnderline(Source& src) {
+        // Begin parsing session
+        src.begin();
+
+        // Expect at most three spaces
+        for (int i = 0; i < 2; i++) {
+            if (!src.expect(' ')) { break; }
+        }
+
+        // Expect either '=' or '-'
+        char bc = 42;
+        if (!src.expect([&bc](char c) { return bc = c, (c == '=' || c == '-'); })) {
+            src.abort();
+            return 0;
+        }
+
+        // Expect any number of this characters
+        while (src.expect([bc](char c) { return c == bc; }));
+
+        // Expect optional spaces
+        while (src.expect([bc](char c) { return c == ' ' || c == '\t' || c == '\r'; }));
+
+        // Expect either a newline or end of file
+        if (!src.expect('\n') && src.available()) {
+            src.abort();
+            return 0;
+        }
+
+        // Commit and return successfully
+        src.commit();
+        return (bc == '=') ? 1 : 2;
     }
 }

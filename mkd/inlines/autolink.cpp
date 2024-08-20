@@ -1,18 +1,78 @@
 #include "autolink.h"
 #include "flog/flog.h"
+#include "link.h"
 
 namespace mkd::inlines::Autolink {
+    bool parseScheme(Source& src, std::string& scheme) {
+        // Begin parsing session
+        src.begin();
+
+        // Expect an ascii letter
+        if (!src.expect([&scheme](char c){
+            if (std::isalpha(c)) {
+                scheme += c;
+                return true;
+            }
+            return false;
+        })) {
+            src.abort();
+            return false;
+        }
+
+        // Expect at least one more letter, digit, '+', '-' or '.'
+        while (src.expect([&scheme](char c){
+            if (std::isalpha(c) || std::isdigit(c) || c == '+' || c == '-' || c == '.') {
+                scheme += c;
+                return true;
+            }
+            return false;
+        }));
+
+        // If not enough characters were found, give up
+        if (scheme.size() < 2) {
+            scheme.clear();
+            return false;
+        }
+
+        // Commit and return successfully
+        src.commit();
+        return true;
+    }
+
     bool parseAbsoluteURI(Source& src, std::string& uri) {
-        // TODO
-        return false;
+        // Begin parsing session
+        src.begin();
+
+        // Expect a scheme
+        std::string scheme;
+        if (!parseScheme(src, scheme)) {
+            src.abort();
+            return false;
+        }
+
+        // Expect a colon
+        if (!src.expect(':')) {
+            src.abort();
+            return false;
+        }
+
+        // Expect any number of characters that aren't a space, '<' or '>'
+        uri = scheme + ':';
+        while (src.expect([&uri](char c){
+            if (c != ' ' && c != '<' && c != '>') {
+                uri += c;
+                return true;
+            }
+            return false;
+        }));
+
+        // Commit and return successfully
+        src.commit();
+        return true;
     }
 
-    bool parseEmailAddress(Source& src, std::string& uri) {
-        // No... fuck off
-        return false;
-    }
-
-    std::shared_ptr<Link> parse(Source& src) {
+    // TODO: Find a way to not need to return a generic inline because of the include loop
+    std::shared_ptr<Inline> parse(Source& src) {
         // Begin parsing session
         src.begin();
 
@@ -24,16 +84,11 @@ namespace mkd::inlines::Autolink {
 
         // Attempt to parse an absolute uri
         std::string uri;
-        bool absURI = parseAbsoluteURI(src, uri);
-        if (!absURI) {
+        if (!parseAbsoluteURI(src, uri)) {
             // Clear the URI in case the absolute parser wrote some characters
             uri.clear();
-
-            // Try parsing an email instead or give up
-            if (!parseEmailAddress(src, uri)) {
-                src.abort();
-                return NULL;
-            }
+            src.abort();
+            return NULL;
         }
 
         // Expect a greater than sign or give up
@@ -48,6 +103,6 @@ namespace mkd::inlines::Autolink {
 
         // Commit parsing session and create link object
         src.commit();
-        return std::make_shared<Link>(inlines, absURI ? uri : ("mailto:" + uri));
+        return std::make_shared<Link>(inlines, uri, uri /* TODO: Check if this title is correct */);
     }
 }
