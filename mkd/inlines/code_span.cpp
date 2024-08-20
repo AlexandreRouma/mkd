@@ -50,7 +50,7 @@ namespace mkd::inlines {
         }
 
         // If the string starts and ends with a space, remove them
-        if (code.starts_with(" ") && code.ends_with(" ")) {
+        if (code.size() >= 2 && code.starts_with(" ") && code.ends_with(" ")) {
             code = code.substr(1, code.size() - 2);
         }
 

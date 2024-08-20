@@ -31,5 +31,6 @@ namespace mkd {
 #include "blocks/list.h"
 #include "blocks/thematic_break.h"
 #include "blocks/heading.h"
+#include "blocks/code_block.h"
 #include "blocks/paragraph.h"
 #include "blocks/blank_line.h"

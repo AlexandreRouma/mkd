@@ -10,7 +10,7 @@ namespace mkd::blocks {
         src.begin();
 
         // Expect 0 to 3 spaces
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             if (!src.expect(' ')) { break; }
         }
 

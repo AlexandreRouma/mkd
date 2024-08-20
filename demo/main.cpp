@@ -69,6 +69,10 @@ void dumpBlock(std::shared_ptr<mkd::Block> block, int offset = 0) {
         }
         flog::debug("{}},", ofs);
     }
+    else if (block->type == mkd::BLOCK_TYPE_CODE_BLOCK) {
+        std::shared_ptr<mkd::blocks::CodeBlock> code = std::dynamic_pointer_cast<mkd::blocks::CodeBlock>(block);
+        flog::debug("{}CODE_BLOCK[INFO='{}']: '{}',", ofs, code->info, code->code);
+    }
     else if (block->type == mkd::BLOCK_TYPE_LIST_ITEM) {
         std::shared_ptr<mkd::blocks::ListItem> item = std::dynamic_pointer_cast<mkd::blocks::ListItem>(block);
         flog::debug("{}LIST_ITEM \\{", ofs);

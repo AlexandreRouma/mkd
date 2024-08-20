@@ -18,6 +18,10 @@ namespace mkd {
         block = blocks::Heading::parse(src);
         if (block) { return block; }
 
+        // Attempt to parse a code block
+        block = blocks::CodeBlock::parse(src);
+        if (block) { return block; }
+
         // TODO: Other shit
 
         // Attempt to parse a paragraph
