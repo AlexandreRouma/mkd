@@ -6,8 +6,12 @@ namespace mkd {
     {}
 
     std::shared_ptr<Block> Block::parse(Source& src) {
+        // Attempt to parse a list
+        std::shared_ptr<Block> block = blocks::List::parse(src);
+        if (block) { return block; }
+
         // Attempt to parse a thematic break
-        std::shared_ptr<Block> block = blocks::ThematicBreak::parse(src);
+        block = blocks::ThematicBreak::parse(src);
         if (block) { return block; }
 
         // Attempt to parse a heading

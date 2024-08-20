@@ -61,6 +61,22 @@ void dumpBlock(std::shared_ptr<mkd::Block> block, int offset = 0) {
         }
         flog::debug("{}},", ofs);
     }
+    else if (block->type == mkd::BLOCK_TYPE_LIST_ITEM) {
+        std::shared_ptr<mkd::blocks::ListItem> item = std::dynamic_pointer_cast<mkd::blocks::ListItem>(block);
+        flog::debug("{}LIST_ITEM \\{", ofs);
+        for (const auto& text : item->inlines) {
+            dumpInline(text, offset + 1);
+        }
+        flog::debug("{}},", ofs);
+    }
+    else if (block->type == mkd::BLOCK_TYPE_LIST) {
+        std::shared_ptr<mkd::blocks::Heading> heading = std::dynamic_pointer_cast<mkd::blocks::Heading>(block);
+        flog::debug("{}HEADING[{}] \\{", ofs, heading->level);
+        for (const auto& text : heading->inlines) {
+            dumpInline(text, offset + 1);
+        }
+        flog::debug("{}},", ofs);
+    }
     else {
         flog::debug("{}UNKNOWN_BLOCK,", ofs);
     }
