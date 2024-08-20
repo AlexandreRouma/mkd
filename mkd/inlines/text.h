@@ -9,7 +9,7 @@ namespace mkd::inlines {
         Text(const std::string& text);
 
         static std::shared_ptr<Text> parse(Source& src);
-        static void coalesceText(std::vector<std::shared_ptr<Inline>>& inlines); // TODO
+        static void coalesceText(std::vector<std::shared_ptr<Inline>>& inlines);
 
         const std::string text;
     };

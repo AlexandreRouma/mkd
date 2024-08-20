@@ -103,6 +103,6 @@ namespace mkd::inlines::Autolink {
 
         // Commit parsing session and create link object
         src.commit();
-        return std::make_shared<Link>(inlines, uri, uri /* TODO: Check if this title is correct */);
+        return std::make_shared<Link>(inlines, uri, "");
     }
 }

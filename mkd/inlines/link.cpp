@@ -224,6 +224,9 @@ namespace mkd::inlines {
             src.abort();
             return NULL;
         }
+
+        // Coalesce all the text objects
+        inlines::Text::coalesceText(inlines);
         
         // Commit parsing session and return the link object
         src.commit();

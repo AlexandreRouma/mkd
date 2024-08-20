@@ -32,6 +32,10 @@ void dumpInline(std::shared_ptr<mkd::Inline> inl, int offset = 0) {
         }
         flog::debug("{}}", ofs);
     }
+
+    else if (inl->type == mkd::INLINE_TYPE_HARD_BREAK) {
+        flog::debug("{}HARD_BREAK,", ofs);
+    }
     else if (inl->type == mkd::INLINE_TYPE_SOFT_BREAK) {
         flog::debug("{}SOFT_BREAK,", ofs);
     }

@@ -7,7 +7,7 @@ namespace mkd {
 
     Inline::~Inline() {}
 
-    std::shared_ptr<Inline> Inline::parse(Source& src, bool allowSoftBreak) {
+    std::shared_ptr<Inline> Inline::parse(Source& src, bool allowBreak) {
         // Attempt to parse a code span
         std::shared_ptr<Inline> inl = inlines::CodeSpan::parse(src);
         if (inl) { return inl; }
@@ -24,8 +24,13 @@ namespace mkd {
         inl = inlines::Autolink::parse(src);
         if (inl) { return inl; }
 
-        // Attempt to parse a soft break if allowed
-        if (allowSoftBreak) {
+        // Attempt to parse breaks if allowed
+        if (allowBreak) {
+            // Attempt to parse a hard break
+            inl = inlines::HardBreak::parse(src);
+            if (inl) { return inl; }
+
+            // Attempt to parse a shoft break
             inl = inlines::SoftBreak::parse(src);
             if (inl) { return inl; }
         }

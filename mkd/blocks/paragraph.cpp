@@ -1,4 +1,5 @@
 #include "paragraph.h"
+#include "../inlines/text.h"
 
 namespace mkd::blocks {
     Paragraph::Paragraph(const std::vector<std::shared_ptr<Inline>>& inlines) :
@@ -20,7 +21,10 @@ namespace mkd::blocks {
         // If the last inline is a line break, remove it
         if (inlines.back()->type == INLINE_TYPE_SOFT_BREAK) { inlines.pop_back(); }
 
-        // Create paragraph ob
+        // Coalesce all the text objects
+        inlines::Text::coalesceText(inlines);
+
+        // Create paragraph object
         return std::make_shared<Paragraph>(inlines);
     }
 }

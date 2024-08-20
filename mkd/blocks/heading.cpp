@@ -1,6 +1,8 @@
 #include "heading.h"
 #include "paragraph.h"
 
+#include "../inlines/text.h"
+
 namespace mkd::blocks {
     Heading::Heading(const std::vector<std::shared_ptr<Inline>>& inlines, int level) :
         Block(BLOCK_TYPE_HEADING),
@@ -56,6 +58,9 @@ namespace mkd::blocks {
         std::vector<std::shared_ptr<Inline>> inlines;
         std::shared_ptr<Inline> inl = NULL;
         while (inl = Inline::parse(src, false)) { inlines.push_back(inl); }
+
+        // Coalesce all the text objects
+        inlines::Text::coalesceText(inlines);
 
         // Commit the parsing session and create the heading object 
         src.commit();
