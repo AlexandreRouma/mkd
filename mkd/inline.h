@@ -7,6 +7,7 @@ namespace mkd {
         INLINE_TYPE_CODE_SPAN,
         INLINE_TYPE_LINK,
         INLINE_TYPE_IMAGE,
+        INLINE_TYPE_HTML,
         INLINE_TYPE_HARD_BREAK,
         INLINE_TYPE_SOFT_BREAK,
         INLINE_TYPE_TEXT
