@@ -17,8 +17,54 @@ namespace mkd::blocks {
     }
 
     std::shared_ptr<CodeBlock> CodeBlock::parseIndented(Source& src) {
-        // TODO
-        return NULL;
+        // Begin parsing session
+        src.begin();
+
+        // Read as many code lines as possible
+        std::string code;
+        while (true) {
+            // Expect 4 spaces
+            bool invalid = false;
+            for (int i = 0; i < 4; i++) {
+                if (!src.expect(' ')) {
+                    invalid = true;
+                    break;
+                }
+            }
+            if (invalid) { break; }
+
+            // Read rest of the line
+            while (src.expect([&code](char c){
+                // Stop on newline
+                if (c == '\n') { return false; }
+
+                // Accept and add to the code string
+                code += c;
+                return true;
+            }));
+
+            // Expect a newline if there was one
+            src.expect('\n');
+
+            // Append the removed newline
+            code += '\n';
+
+            // Expect any number of blank lines
+            std::string blankLine;
+            while (blankLine = parseBlankLine(src), !blankLine.empty()) {
+                code += blankLine;
+            }
+        }
+
+        // If no code was found, give up
+        if (code.empty()) {
+            src.abort();
+            return NULL;
+        }
+
+        // Commit the parsing session and return successfully
+        src.commit();
+        return std::make_shared<CodeBlock>("", code);
     }
 
     std::shared_ptr<CodeBlock> CodeBlock::parseFenced(Source& src) {
@@ -89,7 +135,7 @@ namespace mkd::blocks {
             for (int i = 0; i < bstr; i++) { line += bc; }
 
             // Read rest of the line
-            while (src.expect([bc, &line](char c){
+            while (src.expect([&line](char c){
                 // Stop on newline
                 if (c == '\n') { return false; }
 
@@ -121,5 +167,50 @@ namespace mkd::blocks {
         int count = 0;
         for (; src.expect(c); count++);
         return count;
+    }
+
+
+    std::string CodeBlock::parseBlankLine(Source& src) {
+        // Begin parsing session
+        src.begin();
+
+        // Expect the first 4 spaces
+        for (int i = 0; i < 4; i++) {
+            // If it's not a space
+            if (!src.expect(' ') && !src.expect('\t') && !src.expect('\r')) {
+                // And it's not a newline, give up
+                if (!src.expect('\n')) {
+                    src.abort();
+                    return "";
+                }
+
+                // Otherwise, just return a single newline
+                src.commit();
+                return "\n";
+            }
+        }
+
+        // Expect the next spaces and save then
+        std::string line;
+        while (src.expect([&line](char c) {
+            if (c == ' ' || c == '\t' || c == '\r') {
+                line += c;
+                return true;
+            }
+            return false;
+        }));
+
+        // Expect a newline
+        if (!src.expect('\n')) {
+            src.abort();
+            return "";
+        }
+
+        // Add the remove newline
+        line += '\n';
+
+        // Commit parsing session and return the line past the first four spaces
+        src.commit();
+        return line;
     }
 }

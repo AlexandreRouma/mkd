@@ -16,5 +16,6 @@ namespace mkd::blocks {
         static std::shared_ptr<CodeBlock> parseIndented(Source& src);
         static std::shared_ptr<CodeBlock> parseFenced(Source& src);
         static int parseCodeFence(Source& src, char c);
+        static std::string parseBlankLine(Source& src);
     };
 }
