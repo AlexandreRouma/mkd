@@ -32,7 +32,10 @@ void dumpInline(std::shared_ptr<mkd::Inline> inl, int offset = 0) {
         }
         flog::debug("{}}", ofs);
     }
-
+    else if (inl->type == mkd::INLINE_TYPE_HTML_TAG) {
+        std::shared_ptr<mkd::inlines::HTMLTag> html = std::dynamic_pointer_cast<mkd::inlines::HTMLTag>(inl);
+        flog::debug("{}HTML_TAG: '{}',", ofs, html->html);
+    }
     else if (inl->type == mkd::INLINE_TYPE_HARD_BREAK) {
         flog::debug("{}HARD_BREAK,", ofs);
     }

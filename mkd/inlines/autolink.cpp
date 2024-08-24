@@ -31,6 +31,7 @@ namespace mkd::inlines::Autolink {
         // If not enough characters were found, give up
         if (scheme.size() < 2) {
             scheme.clear();
+            src.abort();
             return false;
         }
 

@@ -24,6 +24,10 @@ namespace mkd {
         inl = inlines::Autolink::parse(src);
         if (inl) { return inl; }
 
+        // Attempt to parse an autolink+
+        inl = inlines::HTMLTag::parse(src);
+        if (inl) { return inl; }
+
         // Attempt to parse breaks if allowed
         if (allowBreak) {
             // Attempt to parse a hard break
